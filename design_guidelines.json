@@ -1,0 +1,104 @@
+{
+  "project_name": "ComicAI Workspace",
+  "theme": "dark",
+  "archetype": "4 (Swiss & High-Contrast)",
+  "design_philosophy": "A functional, high-contrast workspace dedicated to comic creation. The UI is subdued (dark mode) to ensure the white drawing canvas and the user's colorful art remain the absolute center of attention. AI features are highlighted with a high-contrast Warning Yellow accent for quick discovery and interaction.",
+  "colors": {
+    "background": {
+      "page": "bg-zinc-950",
+      "surface": "bg-zinc-900",
+      "surface_hover": "bg-zinc-800",
+      "canvas": "bg-white"
+    },
+    "text": {
+      "primary": "text-white",
+      "secondary": "text-zinc-400",
+      "inverse": "text-black",
+      "accent": "text-yellow-400"
+    },
+    "border": {
+      "default": "border-zinc-800",
+      "active": "border-yellow-400",
+      "subtle": "border-zinc-800/50"
+    },
+    "brand": {
+      "primary": "bg-yellow-400",
+      "primary_hover": "bg-yellow-500",
+      "secondary": "bg-zinc-800",
+      "secondary_hover": "bg-zinc-700"
+    }
+  },
+  "typography": {
+    "fonts": {
+      "heading": "'Outfit', sans-serif",
+      "body": "'Inter', sans-serif",
+      "comic": "'Caveat', cursive"
+    },
+    "scale": {
+      "h1": "text-4xl font-bold tracking-tight",
+      "h2": "text-2xl font-semibold tracking-tight",
+      "h3": "text-xl font-medium",
+      "h4": "text-lg font-medium",
+      "body": "text-sm",
+      "caption": "text-xs uppercase tracking-[0.2em]"
+    }
+  },
+  "layout_strategy": {
+    "structure": "Control Room Grid (Dashboard Mode). Use h-screen with flex/grid to prevent full-page scrolling. The interface is divided into a fixed Top Header, a narrow Left Toolbar, a central infinite/large Canvas Workspace, and a Right Panel Manager.",
+    "spacing": "Dense in toolbars (p-2, gap-2), generous in canvas padding (p-8).",
+    "borders": "Grid Borders style. Expose the skeleton. Use border-r and border-b on containers to define regions clearly without heavy shadows."
+  },
+  "components": {
+    "buttons": {
+      "primary": "bg-yellow-400 text-black font-semibold rounded-none border border-yellow-400 hover:bg-yellow-500 transition-colors px-6 py-2.5",
+      "icon": "h-10 w-10 flex items-center justify-center rounded-md text-zinc-400 hover:text-white hover:bg-zinc-800 transition-all",
+      "active_icon": "h-10 w-10 flex items-center justify-center rounded-md text-yellow-400 bg-yellow-400/10 border border-yellow-400/30"
+    },
+    "panels": {
+      "left_sidebar": "w-16 border-r border-zinc-800 bg-zinc-950 flex flex-col items-center py-4 gap-2 z-10",
+      "right_sidebar": "w-80 border-l border-zinc-800 bg-zinc-950 flex flex-col overflow-y-auto z-10",
+      "canvas_wrapper": "flex-1 bg-zinc-900 overflow-auto relative flex items-center justify-center p-8 bg-[radial-gradient(#27272a_1px,transparent_1px)] [background-size:20px_20px]"
+    },
+    "comic_panel_card": {
+      "default": "border border-zinc-800 bg-zinc-900 rounded p-2 cursor-pointer hover:border-zinc-700 transition-all group",
+      "active": "border-2 border-yellow-400 bg-zinc-900 rounded p-2"
+    }
+  },
+  "interactions": {
+    "hover": "Tool icons must lighten and change background to zinc-800 on hover. Interactive comic panels should elevate slightly or show a subtle border highlight.",
+    "focus": "focus:outline-none focus:ring-2 focus:ring-yellow-400/50 focus:ring-offset-2 focus:ring-offset-zinc-950",
+    "animations": "Use instant or very snappy transitions (duration-150 ease-out) for tools. Delay is the enemy of a drawing app."
+  },
+  "icons": {
+    "library": "lucide-react",
+    "usage": "Use stroke-width 2 for clear, functional tool icons. Examples: Pen (Brush), Eraser, Palette (Color), Undo, Redo, Sparkles (AI Improve), Type (Text Bubble)."
+  },
+  "media": {
+    "images": [
+      {
+        "url": "https://images.unsplash.com/photo-1763732397784-c5ff2651d40c?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjA1ODh8MHwxfHNlYXJjaHwxfHxjb21pYyUyMHBhbmVsJTIwYXJ0fGVufDB8fHx8MTc3NjI2NDAzNnww&ixlib=rb-4.1.0&q=85",
+        "category": "placeholder_panel",
+        "description": "Example of a finished manga/comic panel for gallery preview."
+      },
+      {
+        "url": "https://images.unsplash.com/photo-1772537287469-1b87f07e8d11?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjA1ODh8MHwxfHNlYXJjaHwyfHxjb21pYyUyMHBhbmVsJTIwYXJ0fGVufDB8fHx8MTc3NjI2NDAzNnww&ixlib=rb-4.1.0&q=85",
+        "category": "placeholder_panel",
+        "description": "Example of a comic book layout for preview states."
+      },
+      {
+        "url": "https://images.unsplash.com/photo-1593920647770-ecff87c35490?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NTY2Nzh8MHwxfHNlYXJjaHwxfHxzdXBlcmhlcm8lMjBza2V0Y2h8ZW58MHx8fHwxNzc2MjY0MDM2fDA&ixlib=rb-4.1.0&q=85",
+        "category": "placeholder_sketch",
+        "description": "Example of a raw sketch before AI enhancement."
+      }
+    ]
+  },
+  "instructions_to_main_agent": [
+    "Inject Google Fonts 'Outfit', 'Inter', and 'Caveat' into the index.html or global CSS.",
+    "Implement the Layout as a full-height (h-screen) application with no main window scrolling. The center canvas wrapper should handle pan/zoom internally or just scroll if canvas exceeds bounds.",
+    "For the canvas area, apply a dot grid background pattern using Tailwind arbitrary values to simulate a creative workspace.",
+    "The Right Sidebar is for managing up to 8 comic panels. Show a list/grid of panel thumbnails. Add a prominent 'Improve with AI' (Sparkles icon) button in this sidebar when a panel is active.",
+    "Ensure all interactive elements have data-testid attributes (e.g., data-testid='brush-tool', data-testid='ai-enhance-button').",
+    "Use raw HTML5 <canvas> or standard div elements to structure the drawing area; handle state for drawing tools.",
+    "Do NOT use card components heavily; use raw divs with borders for a crisp, flat layout."
+  ]
+}
