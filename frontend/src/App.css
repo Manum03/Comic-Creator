@@ -1,34 +1,73 @@
-.App-logo {
-    height: 40vmin;
-    pointer-events: none;
+.canvas-container {
+  position: relative;
+  display: inline-block;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-    .App-logo {
-        animation: App-logo-spin infinite 20s linear;
-    }
+.canvas-wrapper {
+  background: white;
+  border-radius: 4px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
 }
 
-.App-header {
-    background-color: #0f0f10;
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    font-size: calc(10px + 2vmin);
-    color: white;
+.text-bubble {
+  position: absolute;
+  background: white;
+  border: 2px solid black;
+  border-radius: 8px;
+  padding: 8px;
+  font-family: 'Caveat', cursive;
+  font-size: 18px;
+  cursor: move;
+  user-select: none;
+  min-width: 100px;
+  min-height: 50px;
 }
 
-.App-link {
-    color: #61dafb;
+.text-bubble-input {
+  background: transparent;
+  border: none;
+  outline: none;
+  width: 100%;
+  font-family: 'Caveat', cursive;
+  font-size: 18px;
+  color: black;
+  resize: none;
 }
 
-@keyframes App-logo-spin {
-    from {
-        transform: rotate(0deg);
-    }
-    to {
-        transform: rotate(360deg);
-    }
+.resize-handle {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  width: 16px;
+  height: 16px;
+  cursor: nwse-resize;
+  background: linear-gradient(135deg, transparent 50%, #666 50%);
+}
+
+.panel-thumbnail {
+  width: 100%;
+  aspect-ratio: 1;
+  border-radius: 4px;
+  overflow: hidden;
+  background: white;
+}
+
+.panel-thumbnail canvas {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.loading-spinner {
+  border: 3px solid rgba(250, 204, 21, 0.3);
+  border-top: 3px solid #facc15;
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
 }
