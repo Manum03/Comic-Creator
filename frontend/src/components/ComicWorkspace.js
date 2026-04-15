@@ -245,12 +245,16 @@ const ComicWorkspace = () => {
       const img = new Image();
       img.onload = () => {
         ctx.drawImage(img, 0, 0);
+        const newHistory = [canvas.toDataURL()];
+        setHistory(newHistory);
+        setHistoryStep(0);
       };
       img.src = panel.canvasData;
+    } else {
+      const newHistory = [canvas.toDataURL()];
+      setHistory(newHistory);
+      setHistoryStep(0);
     }
-    
-    setHistory([canvas.toDataURL()]);
-    setHistoryStep(0);
   };
 
   const deletePanel = (index) => {
@@ -535,7 +539,7 @@ const ComicWorkspace = () => {
                 />
                 <button
                   onClick={() => deleteBubble(bubble.id)}
-                  className="absolute top-1 right-1 text-red-500 hover:text-red-700"
+                  className="delete-bubble-btn"
                   data-testid={`delete-bubble-${bubble.id}`}
                 >
                   <Trash2 size={14} />
