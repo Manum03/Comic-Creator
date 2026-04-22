@@ -16,7 +16,7 @@ El flujo actual es:
 2. El usuario dibuja sobre un `canvas`.
 3. Los paneles y globos de texto se manejan en el estado local del navegador.
 4. Si el usuario pulsa "Mejorar con IA", el frontend envia la imagen actual al backend.
-5. El backend llama a un modelo multimodal y devuelve una imagen mejorada.
+5. El backend llama a `fal-ai/flux-2/edit` y devuelve una imagen mejorada.
 6. El frontend exporta la historieta final como PNG.
 
 ## Estructura del repositorio
@@ -69,7 +69,7 @@ La interfaz esta organizada en cuatro zonas:
 `backend/server.py` expone una API FastAPI con estos endpoints:
 
 - `GET /api/`: verificacion basica
-- `POST /api/panels/improve`: mejora un dibujo a partir de una imagen base64
+- `POST /api/panels/improve`: mejora un dibujo a partir de una imagen base64 o data URL
 - `POST /api/projects`: crea un proyecto
 - `GET /api/projects`: lista proyectos
 - `GET /api/projects/{project_id}`: obtiene un proyecto
@@ -79,7 +79,7 @@ El backend usa:
 
 - `motor` para MongoDB asincrono
 - `pydantic` para validacion de modelos
-- `emergentintegrations` para la llamada al modelo multimodal
+- `fal-client` para la llamada al modelo de edicion de imagenes
 
 ### Persistencia actual
 
@@ -93,7 +93,7 @@ Definir estas variables antes de arrancar el servicio:
 
 - `MONGO_URL`
 - `DB_NAME`
-- `EMERGENT_LLM_KEY`
+- `FAL_KEY`
 - `CORS_ORIGINS` opcional
 
 ### Frontend
@@ -106,23 +106,21 @@ Definir estas variables antes de arrancar el servicio:
 
 ```powershell
 cd backend
-python -m venv .venv
-.venv\Scripts\activate
-pip install -r requirements.txt
+python -m pip install -r requirements.txt
 $env:MONGO_URL="mongodb+srv://..."
 $env:DB_NAME="comic_creator"
-$env:EMERGENT_LLM_KEY="..."
+$env:FAL_KEY="..."
 $env:CORS_ORIGINS="http://localhost:3000"
-uvicorn server:app --host 0.0.0.0 --port 8000 --reload
+python -m uvicorn server:app --host 0.0.0.0 --port 8000 --reload
 ```
 
 ### Frontend
 
 ```powershell
 cd frontend
-yarn install
+npm install --legacy-peer-deps
 $env:REACT_APP_BACKEND_URL="http://localhost:8000"
-yarn start
+npm start
 ```
 
 ## Despliegue
@@ -141,23 +139,21 @@ El repositorio no trae una infraestructura de despliegue completa. No hay `Docke
 
 ```powershell
 cd backend
-python -m venv .venv
-.venv\Scripts\activate
-pip install -r requirements.txt
+python -m pip install -r requirements.txt
 $env:MONGO_URL="mongodb+srv://..."
 $env:DB_NAME="comic_creator"
-$env:EMERGENT_LLM_KEY="..."
+$env:FAL_KEY="..."
 $env:CORS_ORIGINS="https://tu-frontend.com"
-uvicorn server:app --host 0.0.0.0 --port 8000
+python -m uvicorn server:app --host 0.0.0.0 --port 8000
 ```
 
 ### Despliegue manual del frontend
 
 ```powershell
 cd frontend
-yarn install
+npm install --legacy-peer-deps
 $env:REACT_APP_BACKEND_URL="https://tu-backend.com"
-yarn build
+npm run build
 ```
 
 El contenido generado en `frontend/build` puede servirse desde cualquier hosting estatico o servidor web.

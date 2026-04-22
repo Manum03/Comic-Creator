@@ -2,6 +2,7 @@ from fastapi import FastAPI, APIRouter, HTTPException
 from dotenv import load_dotenv
 from starlette.middleware.cors import CORSMiddleware
 from motor.motor_asyncio import AsyncIOMotorClient
+import asyncio
 import os
 import logging
 from pathlib import Path
@@ -9,8 +10,6 @@ from pydantic import BaseModel, Field, ConfigDict
 from typing import List, Optional, Dict
 import uuid
 from datetime import datetime, timezone
-import base64
-from emergentintegrations.llm.chat import LlmChat, UserMessage, ImageContent
 
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')
@@ -70,36 +69,38 @@ async def root():
 @api_router.post("/panels/improve", response_model=ImproveDrawingResponse)
 async def improve_drawing(request: ImproveDrawingRequest):
     try:
-        api_key = os.getenv("EMERGENT_LLM_KEY")
-        if not api_key:
-            raise HTTPException(status_code=500, detail="API key not configured")
-        
-        canvas_base64 = request.canvasData.split(',')[1] if ',' in request.canvasData else request.canvasData
-        
-        chat = LlmChat(
-            api_key=api_key,
-            session_id=f"comic-improve-{uuid.uuid4()}",
-            system_message="You are a professional comic artist assistant that enhances sketches and drawings."
+        fal_api_key = os.getenv("FAL_KEY")
+        if not fal_api_key:
+            raise HTTPException(status_code=500, detail="FAL_KEY not configured")
+
+        os.environ["FAL_KEY"] = fal_api_key
+        import fal_client
+
+        image_input = request.canvasData
+        if not image_input.startswith("data:image/") and not image_input.startswith("http://") and not image_input.startswith("https://"):
+            image_input = f"data:image/png;base64,{image_input}"
+
+        result = await asyncio.to_thread(
+            fal_client.subscribe,
+            "fal-ai/flux-2/edit",
+            arguments={
+                "prompt": request.prompt or "Improve and enhance this comic drawing, make it more detailed and professional while keeping the same composition and style",
+                "image_urls": [image_input],
+            },
         )
-        
-        chat.with_model("gemini", "gemini-3.1-flash-image-preview").with_params(modalities=["image", "text"])
-        
-        msg = UserMessage(
-            text=request.prompt,
-            file_contents=[ImageContent(canvas_base64)]
-        )
-        
-        text_response, images = await chat.send_message_multimodal_response(msg)
-        
-        if not images or len(images) == 0:
+
+        images = result.get("images") or []
+        if not images or not images[0].get("url"):
             raise HTTPException(status_code=500, detail="No image generated")
-        
-        improved_image_base64 = f"data:image/png;base64,{images[0]['data']}"
-        
+
         return ImproveDrawingResponse(
-            improvedImage=improved_image_base64,
+            # Frontend should accept either a data URL or a remote URL in improvedImage.
+            improvedImage=images[0]["url"],
             message="Drawing improved successfully"
         )
+    except HTTPException as e:
+        logging.error(f"Error improving drawing: {str(e.detail)}")
+        raise
     except Exception as e:
         logging.error(f"Error improving drawing: {str(e)}")
         raise HTTPException(status_code=500, detail=f"Error improving drawing: {str(e)}")
