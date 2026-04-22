@@ -147,7 +147,7 @@ const ComicWorkspace = () => {
     }
   };
 
-  const saveCurrentPanelToState = () => {
+  const saveCurrentPanelToState = (nextTextBubbles = textBubbles) => {
     const canvas = canvasRef.current;
     if (!canvas) return;
     
@@ -156,7 +156,7 @@ const ComicWorkspace = () => {
       updatedPanels[activePanelIndex] = {
         ...updatedPanels[activePanelIndex],
         canvasData: canvas.toDataURL(),
-        textBubbles: textBubbles
+        textBubbles: nextTextBubbles
       };
       setPanels(updatedPanels);
     }
@@ -283,24 +283,26 @@ const ComicWorkspace = () => {
       height: 80,
       style: 'speech'
     };
-    setTextBubbles([...textBubbles, newBubble]);
-    saveCurrentPanelToState();
+    const updated = [...textBubbles, newBubble];
+    setTextBubbles(updated);
+    saveCurrentPanelToState(updated);
   };
 
   const updateBubbleText = (id, newText) => {
     const updated = textBubbles.map(b => b.id === id ? { ...b, text: newText } : b);
     setTextBubbles(updated);
-    saveCurrentPanelToState();
+    saveCurrentPanelToState(updated);
   };
 
   const deleteBubble = (id) => {
-    setTextBubbles(textBubbles.filter(b => b.id !== id));
-    saveCurrentPanelToState();
+    const updated = textBubbles.filter(b => b.id !== id);
+    setTextBubbles(updated);
+    saveCurrentPanelToState(updated);
   };
 
   const startDragging = (e, bubble) => {
+    if (e.target.closest('textarea, button, .resize-handle')) return;
     e.preventDefault();
-    if (e.target.classList.contains('resize-handle')) return;
     setDraggingBubble({ ...bubble, startX: e.clientX, startY: e.clientY });
   };
 
@@ -321,6 +323,7 @@ const ComicWorkspace = () => {
           : b
       );
       setTextBubbles(updated);
+      saveCurrentPanelToState(updated);
       setDraggingBubble({ ...draggingBubble, startX: e.clientX, startY: e.clientY });
     } else if (resizingBubble) {
       const deltaX = e.clientX - resizingBubble.startX;
@@ -332,14 +335,12 @@ const ComicWorkspace = () => {
           : b
       );
       setTextBubbles(updated);
+      saveCurrentPanelToState(updated);
       setResizingBubble({ ...resizingBubble, startX: e.clientX, startY: e.clientY });
     }
   };
 
   const handleMouseUp = () => {
-    if (draggingBubble || resizingBubble) {
-      saveCurrentPanelToState();
-    }
     setDraggingBubble(null);
     setResizingBubble(null);
   };
@@ -535,6 +536,7 @@ const ComicWorkspace = () => {
                   className="text-bubble-input"
                   value={bubble.text}
                   onChange={(e) => updateBubbleText(bubble.id, e.target.value)}
+                  onMouseDown={(e) => e.stopPropagation()}
                   data-testid={`text-bubble-input-${bubble.id}`}
                 />
                 <button
