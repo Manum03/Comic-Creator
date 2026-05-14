@@ -42,7 +42,7 @@ const ComicWorkspace = () => {
       saveToHistory();
     }
     createNewProject();
-  }, []);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const createNewProject = async () => {
     try {
@@ -393,7 +393,7 @@ const ComicWorkspace = () => {
       document.removeEventListener('mousemove', handleMouseMove);
       document.removeEventListener('mouseup', handleMouseUp);
     };
-  }, [draggingBubble, resizingBubble, textBubbles]);
+  }, [draggingBubble, resizingBubble, textBubbles]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <div className="h-screen flex flex-col bg-zinc-950 text-white">
